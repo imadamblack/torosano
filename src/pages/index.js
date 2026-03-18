@@ -90,8 +90,8 @@ const setFormSteps = ({fullName, phone}) => ([
         label: 'Abarrotes',
       },
       {
-        value: 'otro',
-        label: 'Otro',
+        value: 'consumo-propio',
+        label: 'Es para consumo propio',
       },
     ],
     cols: 1,
@@ -278,6 +278,7 @@ export default function Survey({lead, utm}) {
     register,
     handleSubmit,
     formState: {errors},
+    getValues,
     watch,
   } = methods;
   const router = useRouter();
@@ -320,6 +321,13 @@ export default function Survey({lead, utm}) {
   }, 0);
   const handleNext = async () => {
     const currentStep = formSteps[formStep];
+    const values = getValues();
+
+    console.log(values);
+
+    if (values?.tipo === 'consumo-propio') {
+      await router.push('/consumo-propio');
+    }
 
     if (currentStep.name === 'user') {
       formSteps = setFormSteps({fullName: lead.fullName, phone: lead.phone, user: watch('user')});
