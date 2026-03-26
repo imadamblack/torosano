@@ -3,16 +3,11 @@ import Blockbuster from '../components/blockbuster';
 import Faqs from '../components/faqs';
 import { info } from '../../info';
 
-
-import aguachiles from '../../public/results/taller_aguachiles.jpg';
-import chinas from '../../public/results/taller_chinas.jpg';
-import pastas from '../../public/results/taller_pastas.jpg';
-
-import i01 from '../../public/survey/01.jpeg';
 import i02 from '../../public/survey/02.jpeg';
 import i03 from '../../public/survey/03.jpeg';
 import i04 from '../../public/survey/04.jpeg';
 import i05 from '../../public/survey/05.jpeg';
+import fbEvent from '../services/fbEvents';
 
 export default function Results({lead}) {
   const {fullName} = lead;
@@ -21,7 +16,14 @@ export default function Results({lead}) {
   const SectionCTA = () => <div className="w-full space-y-4 mt-20">
     <hr className="mb-8"/>
     <p className="ft-4 text-center font-semibold">Programa una degustación y cotiza tu primer pedido</p>
-    <a href={`https://wa.me/${info.whatsapp.value}`} target="_blank" className="button !w-full">Mándanos un WhatsApp</a>
+    <a
+      href={`https://wa.me/${info.whatsapp.value}`}
+      onClick={() => fbEvent('Contact')}
+      target="_blank"
+      className="button !w-full"
+    >
+      Mándanos un WhatsApp
+    </a>
   </div>;
 
   return (
@@ -47,10 +49,7 @@ export default function Results({lead}) {
             </div>
           </div>
 
-          <div className="w-full space-y-8 mb-20">
-            <p className="ft-4 text-center font-semibold">Programa una degustación y cotiza tu primer pedido</p>
-            <a href="" target="_blank" className="button !w-full">Mándanos un WhatsApp</a>
-          </div>
+          <SectionCTA />
 
         </div>
       </div>

@@ -30,9 +30,8 @@ main {
 }
 
 a.link {
-  @apply flex text-brand-3 mt-8
-  after:content-['→'] after:ml-4
-  hover:text-brand-5 hover:after:ml-8;
+  @apply text-brand-5 border-b border-brand-5 w-max
+  hover:text-brand-5;
 }
 
 * {

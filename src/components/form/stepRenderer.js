@@ -94,6 +94,13 @@ export default function StepRenderer({
             options={step.options}
             className={errors[step.name]?.message ? '!border-brand-2' : undefined}
           />
+          {step.name === 'ubicacion' &&
+            <p className="-ft-1 text-center mt-12 pt-12 border-t">
+              No encuentras tu zona pero quieres probar Torosano,
+              {' '}
+              <Link href="/consumo-propio"><a className="link">da clic aquí.</a></Link>
+            </p>
+          }
         </div>
       );
 
