@@ -182,7 +182,7 @@ const setFormSteps = ({fullName, phone}) => ([
   },
   {
     type: 'radio',
-    name: 'taller',
+    name: 'busqueda',
     title: '¿Buscas productos premium con margen 30–50%?',
     inputOptions: {required: 'Selecciona una por favor'},
     options: [

@@ -1,44 +1,71 @@
 export default function fbEvent(
   eventName,
-  userData = {
-    phone: '',
-    email: '',
-    externalID: ''
-  },
-  eventID = Date.now(),
+  userData = {},
+  eventID,
   clientData = {}
 ) {
-  const standardEvents = ['PageView', 'Purchase', 'Lead', 'InitiateCheckout'];
-  const isStandard = standardEvents.includes(eventName);
+  const standardEvents = new Set([
+    'PageView',
+    'Purchase',
+    'Lead',
+    'Contact',
+    'InitiateCheckout',
+  ]);
+
+  const isStandard = standardEvents.has(eventName);
+
+  // Conviene enviar string y reutilizar exactamente el mismo ID en Pixel + backend
+  const resolvedEventID =
+    eventID ??
+    (typeof crypto !== 'undefined' && crypto.randomUUID
+      ? crypto.randomUUID()
+      : String(Date.now()));
+
+  const normalizedUser = {
+    ph: userData.phone || '',
+    em: userData.email || '',
+    external_id: userData.externalID || '',
+  };
 
   try {
-    if (typeof fbq !== 'undefined') {
+    if (typeof fbq === 'function') {
       if (isStandard) {
-        fbq('track', eventName, clientData);
+        fbq('track', eventName, clientData, { eventID: resolvedEventID });
       } else {
-        fbq('trackCustom', eventName, clientData);
+        fbq('trackCustom', eventName, clientData, { eventID: resolvedEventID });
       }
     }
   } catch (err) {
     console.error('fbq error:', err);
   }
 
-  const payload = JSON.stringify({
+  const payload = {
     eventName,
-    eventID,
-    user: {
-      ph: userData.phone,
-      em: userData.email,
-      externalID: userData.externalID
-    },
-    clientData
-  });
+    eventID: resolvedEventID,
+    user: normalizedUser,
+    clientData,
+  };
 
-  return fetch(`/api/fb-event`, {
+  return fetch('/api/fb-event', {
     method: 'POST',
-    body: payload,
     headers: {
       'Content-Type': 'application/json',
     },
-  }).then(res => res.json()).catch(err => console.log(err));
+    body: JSON.stringify(payload),
+  })
+    .then(async (res) => {
+      if (!res.ok) {
+        const text = await res.text().catch(() => '');
+        throw new Error(`fb-event request failed: ${res.status} ${text}`);
+      }
+      return res.json();
+    })
+    .catch((err) => {
+      console.error('fb-event fetch error:', err);
+      return {
+        ok: false,
+        eventID: resolvedEventID,
+        error: err.message,
+      };
+    });
 }
